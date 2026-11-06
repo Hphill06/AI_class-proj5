@@ -121,7 +121,6 @@ def value_iteration(mdp, gamma, epsilon=1e-4, iter_limit=1e6):
   """
   parameters:
   -----------
-  this is a change
   mdp: instance of the RacecarMDP class
 
   gamma: value in range (0, 1) that acts as the discount factor
