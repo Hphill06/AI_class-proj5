@@ -1,1 +1,26 @@
-report for hudson
+this ones getting turned in late so i can try and go back and understand everyhting
+
+
+ok, so the whole thing is a MDP where i just use the bellman equation over and over until the 
+untilities stop changing.
+
+and that eventally gets me the utility (the result of the bellman equation) in a dict format 
+where it shows state : action,reward. 
+
+im aslo going to submit my notes on paper as i work through this problem in my report, I think 
+my biggest challenge for this assigment is making sure i fully understand the bellman equation, so 
+im writing out all the stuff im reading on it on paper.
+
+first thing i did was write out an example of being in the state warm, then doing the fast action, 
+which can either make us warm or overheated, and working out the math of that was helpful to see
+excatly how this is working.
+
+looking at these equtaions and it being something like warm + fast :
+
+0.9 + (20 + gamma * U(warm)) + 0.1 + (-50 + gamma*u(overheated)) 
+
+and just having to be like "yeah U(warm) is a number trust" is where im getting stuck on
+I had claude give me a small example i could visalize with a sliding bar to show the score
+as it goes along, and that was helpful, 
+
+

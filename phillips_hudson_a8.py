@@ -110,8 +110,8 @@ def mdp_tutorial():
   print()
 
   # For a given state-action pair, (s, a), print transition probability distribution:
-  s = 'Cool'
-  a = 'Fast'
+  s = 'Warm'
+  a = 'Slow'
   for s_prime in mdp.transition_model[(s, a)].keys():
     print('P('+ s_prime + ' | ' + s + ', ' + str(a) + ') = ' + str(mdp.transition_model[(s, a)][s_prime]))
 
@@ -145,8 +145,23 @@ def value_iteration(mdp, gamma, epsilon=1e-4, iter_limit=1e6):
                            }
                   }
 
-  """
-  pass # remove this and add your code.
+  """ 
+
+#for each state we will need to hold the utilty, so lets set those to 0 for all of them
+
+  U = {'Cool': 0.0,  'Warm' : 0.0, 'Overheated' : 0.0}
+  #since this will be going over each part one at a time, we need to make sure the old utiltiy isnt updated
+  #early before another action is tested, so we save the last sweeps utilty to U_old here
+  U_old = copy(U)
+  
+
+
+  #sweep time
+
+  for state in mdp.states:
+    if not (mdp.is_terminal[state]):
+      #now we need to update the U! we do that with the bellman equation
+      
 
   # return solution
 
@@ -161,10 +176,12 @@ def print_policy(solution):
 
 if __name__ == '__main__':
   # start here:
-  mdp_tutorial()
-
+  #mdp_tutorial()
+  
   # uncomment the following when you are ready to test value_iteration()
-  my_mdp = RacecarMDP
-  # solution = value_iteration()
-  # print_policy(solution)
+  my_mdp = RacecarMDP()
+
+  
+  solution = value_iteration(my_mdp,.5)
+  #print_policy(solution)
 
