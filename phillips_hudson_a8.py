@@ -81,7 +81,7 @@ class RacecarMDP:
       return -50
 
     elif state == 'Warm' and action == 'Fast':
-      return 34
+      return 20
 
     elif state == 'Cool' and action == 'Fast':
       return 15
