@@ -71,7 +71,7 @@ class RacecarMDP:
       ("Cool", "Slow"): {"Cool": 1.0, "Warm": 0.0, "Overheated": 0.0}, # P(s' | Cool, Slow)
       ("Cool", "Fast"): {"Cool": 0.5, "Warm": 0.5, "Overheated": 0.0}, # P(s' | Cool, Fast)
       ("Warm", "Slow"): {"Cool": 0.5, "Warm": 0.5, "Overheated": 0.0}, # P(s' | Warm, Slow)
-      ("Warm", "Fast"): {"Cool": 0.0, "Warm": 0.9, "Overheated": 0.1}  # P(s' | Warm, Fast)
+      ("Warm", "Fast"): {"Cool": 0.0, "Warm": 0.89, "Overheated": 0.11}  # P(s' | Warm, Fast)
     }
 
 
@@ -81,7 +81,7 @@ class RacecarMDP:
       return -50
 
     elif state == 'Warm' and action == 'Fast':
-      return 20
+      return 34
 
     elif state == 'Cool' and action == 'Fast':
       return 15
@@ -114,7 +114,6 @@ def mdp_tutorial():
   a = 'Slow'
   for s_prime in mdp.transition_model[(s, a)].keys():
     print('P('+ s_prime + ' | ' + s + ', ' + str(a) + ') = ' + str(mdp.transition_model[(s, a)][s_prime]))
-
 
 
 def value_iteration(mdp, gamma, epsilon=1e-4, iter_limit=1e6):
@@ -150,20 +149,80 @@ def value_iteration(mdp, gamma, epsilon=1e-4, iter_limit=1e6):
 #for each state we will need to hold the utilty, so lets set those to 0 for all of them
 
   U = {'Cool': 0.0,  'Warm' : 0.0, 'Overheated' : 0.0}
+  sweeps = 0
   #since this will be going over each part one at a time, we need to make sure the old utiltiy isnt updated
   #early before another action is tested, so we save the last sweeps utilty to U_old here
-  U_old = copy(U)
-  
+  U_old = copy.copy(U)
+  policy = {'Cool': None, 'Warm': None}
+
 
 
   #sweep time
+  while(sweeps < iter_limit):
+    sweeps+=1
+    for state in mdp.states:
 
-  for state in mdp.states:
-    if not (mdp.is_terminal[state]):
-      #now we need to update the U! we do that with the bellman equation
-      
+      if not (mdp.is_terminal[state]):
+        #now we need to update the U! we do that with the bellman equation
+        action_results = {}
+        for a in mdp.actions:
+          #print (state + a)
+          #lets get the q value Q(s,a) - total reward so the entire bellman equation - the max (a) part
+          action_results[a] = Q_value(mdp,state,a,U,gamma)
 
-  # return solution
+
+        #now set the highest utility of those to the state we are in
+        U[state] = getMaxValFromDict(action_results)
+        #and change the policy
+        policy[state] = getMaxKeyValFromDict(action_results)
+    
+    
+    #after each sweep get the largest change, and see if its the less than our epsilon
+    cool_change = abs(U['Cool'] - U_old['Cool'])
+    warm_Change = abs(U['Warm'] - U_old['Warm'])
+    if (max(cool_change,warm_Change) < epsilon):
+      print("reached eplislon limit, not enough changes were made")
+      break
+
+    U_old = copy.copy(U)
+
+
+
+
+  print(U)
+
+  solution = {
+    'Cool': {'action': policy['Cool'], 'utility': U['Cool']},
+    'Warm': {'action': policy['Warm'], 'utility': U['Warm']},
+}
+  return solution
+ 
+def Q_value (mdp,s,a,U,gamma):
+  #total summed item (the sigma with the s_prime under it )
+  total = 0.0
+  for resultState, Prob  in mdp.transition_model[(s, a)].items():
+    #print("FROM STATE  " + s + " doing action " + a + " you get :" + str(resultState)  + " "  + str(Prob))
+    total += Prob * (mdp.reward(s, a, resultState) + (gamma * U[resultState]))
+    #print(total)
+  return total
+
+
+def getMaxValFromDict(dict):
+  max = 0.0
+  for keys in dict:
+    if dict[keys] > max:
+      max = dict[keys]
+  return max
+
+def getMaxKeyValFromDict(dict):
+  max_num = 0.0
+  max_name = ""
+  for keys in dict:
+    if dict[keys] > max_num:
+      max_num = dict[keys]
+      max_name = keys
+  return max_name
+
 
 
 def print_policy(solution):
@@ -181,7 +240,8 @@ if __name__ == '__main__':
   # uncomment the following when you are ready to test value_iteration()
   my_mdp = RacecarMDP()
 
+
+  solution = value_iteration(my_mdp,.9)
   
-  solution = value_iteration(my_mdp,.5)
-  #print_policy(solution)
+  print_policy(solution)
 

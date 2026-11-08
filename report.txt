@@ -24,3 +24,40 @@ I had claude give me a small example i could visalize with a sliding bar to show
 as it goes along, and that was helpful, 
 
 
+
+term = meaning = code
+
+s - sates updated - mdp.sates
+a - each action you could take -  for a in mdp.actions
+s′ -each state you could land in -the keys of mdp.transition_model[(s, a)]
+P(s′ | s, a) - the chance of landing in s′ -mdp.transition_model[(s, a)][s_prime]
+R(s, a, s′) - the reward for that move -mdp.reward(s, a, s_prime)
+γ - how much the future counts -gamma
+U(s′) - the current estimate of s′'s utility -U_old[s_prime]
+
+
+changes testing : 
+
+GAMMA CHANGES  | LEVEL | RESULT
+
+gamma | small | 0.001 - utility was really low, because the utility was multipled to be super low in the q value function
+gamma | medium | .5 similar to above, halved the utiltiy in my q function, so it wouldnt be able to get a very high utility value total
+gamma | large | 0.9, pretty good, there isnt a vast diffrence in the utility like past results
+
+
+reward function changes :
+
+I changed the warm -> fast reward to be an abusrd number just to see what happens, and as expected
+it made the fast action much more desirable since it would give such a high bonus
+
+if you change warm -> fast to return 16, it will have a new optimal policy of slow, since taking the risk of 
+overheating is now only worth one extra point
+
+warm needs fast to be a reward of at minimum 32 in order for it to be desirable even with the risk of overheating
+
+
+
+I changed the chances of overheating to be higher to see how that played into
+my past result of 32 being the minimum in which the optimal policy would choose fast still. 
+even a .01 change in each causes it to prefer slow again
+requiring it to go up to 34 to get back to prefering fast
